@@ -1,1 +1,1 @@
-rootProject.name = "JTNY"
+rootProject.name = "Template"
