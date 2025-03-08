@@ -7,7 +7,8 @@ import org.bukkit.command.TabExecutor
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
 
-import com.joutak.effectZone.Zone
+import com.joutak.effectZone.data.Zone
+import com.joutak.effectZone.utils.ZoneManager
 
 object ZoneCommandExecutor: CommandExecutor, TabExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
@@ -40,8 +41,8 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
                         args[7].toDouble(), 
                         args[8].toDouble()
                     )
-                    Zone.add(newZone)
-                    sender.sendMessage("Добавлена зона с именем ${newZone.getName()}.")
+                    ZoneManager.add(newZone)
+                    sender.sendMessage("Добавлена зона с именем ${newZone.name}.")
                 } catch (e: NumberFormatException) {
                     sender.sendMessage("Координаты должны быть числами.")
                 } catch (e: IllegalArgumentException) {
@@ -54,7 +55,7 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
                 }
 
                 try {
-                    Zone.remove(args[1])
+                    ZoneManager.remove(args[1])
                     sender.sendMessage("Зона ${args[1]} удалена.")
                 }
                 catch (e: IllegalArgumentException) {
@@ -66,12 +67,12 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
                     return false
                 }
 
-                if (Zone.getZones().isEmpty()) {
+                if (ZoneManager.getZones().isEmpty()) {
                     sender.sendMessage("Нет активных зон.")
                 } else {
                     sender.sendMessage("Список зон:")
-                    Zone.getZones().values.forEach {
-                        sender.sendMessage(it.getName())
+                    ZoneManager.getZones().values.forEach {
+                        sender.sendMessage(it.name)
                     }
                 }
             }
@@ -81,18 +82,13 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
                 }
 
                 try {
-                    val zone = Zone.get(args[1])
-                    val x1 = zone.getCoords()["x1"]
-                    val y1 = zone.getCoords()["y1"]
-                    val z1 = zone.getCoords()["z1"]
-                    val x2 = zone.getCoords()["x2"]
-                    val y2 = zone.getCoords()["y2"]
-                    val z2 = zone.getCoords()["z2"]
+                    val zone = ZoneManager.get(args[1])
 
-                    sender.sendMessage("Информация о зоне ${zone.getName()}:")
-                    sender.sendMessage("Эффект: ${zone.getEffect().name}")
-                    // sender.sendMessage("Мир: ${zone.getWorldName()}")
-                    sender.sendMessage("Координаты: (${x1}, ${y1}, ${z1} ; ${x2}, ${y2}, ${z2})")
+                    sender.sendMessage("Информация о зоне ${zone.name}:")
+                    sender.sendMessage("Эффект: ${zone.effect.name}")
+                    sender.sendMessage("Мир: ${zone.worldName}")
+                    // sender.sendMessage("Измерение: ${Bukkit.getWorld(zone.worldName)?.environment.toString()}")
+                    sender.sendMessage("Координаты: (${zone.x1}, ${zone.y1}, ${zone.z1} ; ${zone.x2}, ${zone.y2}, ${zone.z2})")
                 }
                 catch (e: IllegalArgumentException) {
                     sender.sendMessage("${e.message}")
@@ -109,8 +105,8 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<String>): List<String> {
         return when (args.size) {
             1 -> listOf("add", "remove", "list", "info").filter { it.startsWith(args[0], true) }
-            2 -> if (args[0] == "remove" || args[0] == "info") Zone.getZones().values.map { it.getName() }.filter { it.startsWith(args[1], true) } else emptyList()
-            3 -> if (args[0] == "add") PotionEffectType.values().map { it.getName() }.filter { it.startsWith(args[2], true) } else emptyList()
+            2 -> if (args[0] == "remove" || args[0] == "info") ZoneManager.getZones().values.map { it.name }.filter { it.startsWith(args[1], true) } else emptyList()
+            3 -> if (args[0] == "add") PotionEffectType.values().map { it.name }.filter { it.startsWith(args[2], true) } else emptyList()
             else -> emptyList()
         }
     }

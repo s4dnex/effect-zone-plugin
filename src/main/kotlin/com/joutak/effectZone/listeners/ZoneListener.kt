@@ -4,9 +4,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 
-import com.joutak.effectZone.Zone
+import com.joutak.effectZone.utils.ZoneManager
 
 object ZoneListener : Listener {
     @EventHandler
@@ -14,11 +13,12 @@ object ZoneListener : Listener {
         val player = event.player
         val to = event.to
 
-        for (zone in Zone.getZones().values) {
-            if (zone.isInside(to)) {
-                zone.spawnParticles(to.getY())
+        // Если игрок находится в одной из зон, то даем ему соответствующий эффект и создаем партиклы внутри зоны
+        for (zone in ZoneManager.getZones().values) {
+            if (ZoneManager.isInside(zone, to)) {
+                ZoneManager.spawnParticles(zone, to)
                 player.addPotionEffect(
-                    PotionEffect(zone.getEffect(), 100, 1, false, true, false)
+                    PotionEffect(zone.effect, 100, 1, false, true, true)
                 )
                 return
             }
