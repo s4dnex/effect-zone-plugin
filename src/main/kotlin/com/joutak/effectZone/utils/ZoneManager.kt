@@ -47,9 +47,9 @@ object ZoneManager {
         val world = Bukkit.getWorld(zone.worldName) ?: throw IllegalArgumentException("Мир $zone.worldName не найден.")
 
         if (playerLoc.world?.name != world.name) return false
-        return playerLoc.x in minOf(zone.x1, zone.x2)..maxOf(zone.x1, zone.x2) &&
-                playerLoc.y in minOf(zone.y1, zone.y2)..maxOf(zone.y1, zone.y2) &&
-                playerLoc.z in minOf(zone.z1, zone.z2)..maxOf(zone.z1, zone.z2)
+        return playerLoc.x in zone.x1..zone.x2 &&
+                playerLoc.y in zone.y1..zone.y2 &&
+                playerLoc.z in zone.z1..zone.z2
     }
 
     /**

@@ -29,17 +29,23 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
                 }
 
                 try {
+                    val x1 = minOf(args[3].toDouble(), args[6].toDouble())
+                    val x2 = maxOf(args[3].toDouble(), args[6].toDouble())
+                    val y1 = minOf(args[4].toDouble(), args[7].toDouble())
+                    val y2 = maxOf(args[4].toDouble(), args[7].toDouble())
+                    val z1 = minOf(args[5].toDouble(), args[8].toDouble())
+                    val z2 = maxOf(args[5].toDouble(), args[8].toDouble())
+
                     val newZone = Zone(
                         args[1],
                         PotionEffectType.getByName(args[2]) ?: throw IllegalArgumentException("Неизвестный эффект ${args[2]}"),
                         sender.world.name,
-                        // sender.world.environment, 
-                        args[3].toDouble(), 
-                        args[4].toDouble(), 
-                        args[5].toDouble(), 
-                        args[6].toDouble(), 
-                        args[7].toDouble(), 
-                        args[8].toDouble()
+                        x1,
+                        y1,
+                        z1,
+                        x2,
+                        y2,
+                        z2
                     )
                     ZoneManager.add(newZone)
                     sender.sendMessage("Добавлена зона с именем ${newZone.name}.")
@@ -87,7 +93,6 @@ object ZoneCommandExecutor: CommandExecutor, TabExecutor {
                     sender.sendMessage("Информация о зоне ${zone.name}:")
                     sender.sendMessage("Эффект: ${zone.effect.name}")
                     sender.sendMessage("Мир: ${zone.worldName}")
-                    // sender.sendMessage("Измерение: ${Bukkit.getWorld(zone.worldName)?.environment.toString()}")
                     sender.sendMessage("Координаты: (${zone.x1}, ${zone.y1}, ${zone.z1} ; ${zone.x2}, ${zone.y2}, ${zone.z2})")
                 }
                 catch (e: IllegalArgumentException) {

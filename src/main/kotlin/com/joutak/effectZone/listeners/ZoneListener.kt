@@ -20,7 +20,6 @@ object ZoneListener : Listener {
                 player.addPotionEffect(
                     PotionEffect(zone.effect, 100, 1, false, true, true)
                 )
-                return
             }
         }
     }
