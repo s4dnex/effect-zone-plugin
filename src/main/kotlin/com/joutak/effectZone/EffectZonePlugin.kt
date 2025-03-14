@@ -85,13 +85,13 @@ class EffectZonePlugin : JavaPlugin() {
         loadZones()
 
         // Периодично проверяем игроков, если они находятся в какой-либо зоне
-        Bukkit.getScheduler().runTaskTimer(this, Runnable {
-            for (player in Bukkit.getOnlinePlayers()) {
-                ZoneListener.onPlayerMove(
-                    PlayerMoveEvent(player, player.location, player.location)
-                )
-            }
-        }, 0L, 100L)
+//        Bukkit.getScheduler().runTaskTimer(this, Runnable {
+//            for (player in Bukkit.getOnlinePlayers()) {
+//                ZoneListener.onPlayerMove(
+//                    PlayerMoveEvent(player, player.location, player.location)
+//                )
+//            }
+//        }, 0L, 100L)
 
         logger.info("Effect Zone plugin version ${pluginMeta.version} enabled!")
     }
