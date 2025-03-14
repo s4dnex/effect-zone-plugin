@@ -5,10 +5,11 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.Bukkit
 import java.io.File
 import java.io.IOException
-
 import com.joutak.effectZone.listeners.ZoneListener
 import com.joutak.effectZone.commands.ZoneCommandExecutor
+import com.joutak.effectZone.data.Zone
 import com.joutak.effectZone.utils.ZoneManager
+import org.bukkit.event.player.PlayerMoveEvent
 
 class EffectZonePlugin : JavaPlugin() {
     companion object {
@@ -43,11 +44,12 @@ class EffectZonePlugin : JavaPlugin() {
         for (value in zoneList) {
             try {
                 ZoneManager.add(
-                    ZoneManager.deserialize(value)
+                    Zone.deserialize(value)
                 )
             }
             catch (e: Exception) {
                 logger.severe("Ошибка при загрузке зон: ${e.message}.")
+                break
             }
         }
     }
@@ -62,7 +64,7 @@ class EffectZonePlugin : JavaPlugin() {
         }
 
         zonesFile.set("zones", ZoneManager.getZones().values.map {
-            value -> ZoneManager.serialize(value)
+            value -> value.serialize()
         })
 
         try {
@@ -75,7 +77,6 @@ class EffectZonePlugin : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         instance = this
-
         loadConfig()
 
         // Register commands and events
@@ -83,8 +84,16 @@ class EffectZonePlugin : JavaPlugin() {
         getCommand("zone")?.setExecutor(ZoneCommandExecutor)
         loadZones()
 
-        logger.info("Effect Zone plugin version ${pluginMeta.version} enabled!")
+        // Периодично проверяем игроков, если они находятся в какой-либо зоне
+        Bukkit.getScheduler().runTaskTimer(this, Runnable {
+            for (player in Bukkit.getOnlinePlayers()) {
+                ZoneListener.onPlayerMove(
+                    PlayerMoveEvent(player, player.location, player.location)
+                )
+            }
+        }, 0L, 100L)
 
+        logger.info("Effect Zone plugin version ${pluginMeta.version} enabled!")
     }
 
     override fun onDisable() {
