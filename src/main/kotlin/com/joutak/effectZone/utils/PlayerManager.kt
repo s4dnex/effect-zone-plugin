@@ -37,12 +37,10 @@ object PlayerManager {
     }
 
     /**
-     * Удаление зоны у всех игроков
+     * Множество всех игроков, которые находятся в какой-либо зоне
      */
-    fun removeZone(zone: Zone) {
-        for (playerId in playersInZone.keys) {
-            removeZone(playerId, zone)
-        }
+    fun getPlayers(): Set<Player> {
+        return playersInZone.keys
     }
 
     /**

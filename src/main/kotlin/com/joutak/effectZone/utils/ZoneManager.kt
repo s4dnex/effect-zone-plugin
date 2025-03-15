@@ -29,9 +29,14 @@ object ZoneManager {
         if (!zones.containsKey(name))
             throw IllegalArgumentException("Зоны с таким именем не существует.")
 
+        val zone = zones.getValue(name)
+        for (player in PlayerManager.getPlayers()) {
+            if (zone in PlayerManager.getZones(player))
+                EffectsManager.removeEffect(player, zone)
+                PlayerManager.removeZone(player, zone)
+        }
+        EffectsManager.removeZone(zone)
         zones.remove(name)
-        EffectsManager.removeZone(zones.getValue(name))
-        PlayerManager.removeZone(zones.getValue(name))
     }
 
     fun getZones(): Map<String, Zone> {
